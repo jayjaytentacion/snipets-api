@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h_$)trbaf4@-bcc^htwdq&45dxf7pgu3x7(!y%e1n4lb-y-7n='
+SECRET_KEY = config('SECRET_KEY',default='django-insecure-h_$)trbaf4@-bcc^htwdq&45dxf7pgu3x7(!y%e1n4lb-y-7n=')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG',default=True,cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'snippetsapi',
     'rest_framework',
-    'drf_yasg'
+    'drf_yasg',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -76,12 +78,25 @@ WSGI_APPLICATION = 'snippets.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd6mckk9l2qrm5',
+        'USER': 'jpuwikklsmfdhr',
+        'PASSWORD': 'd7e0856aad07897c60369f074fe3e0832df93201cbe8f2fd8bd5309121ae78b7',
+        'HOST': 'ec2-34-203-182-65.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
+import dj_database_url
+database_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(database_from_env)
 
 
 # Password validation

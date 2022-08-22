@@ -19,6 +19,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset=User.objects.all()
     serializer_class=UserSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.filter().order_by('id')
+
 class SnippetViewSet(viewsets.ModelViewSet):
     # """
     # This viewset automatically provides `list`, `create`, `retrieve`,
