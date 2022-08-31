@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,20 +87,22 @@ WSGI_APPLICATION = 'snippets.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd6mckk9l2qrm5',
-        'USER': 'jpuwikklsmfdhr',
-        'PASSWORD': 'd7e0856aad07897c60369f074fe3e0832df93201cbe8f2fd8bd5309121ae78b7',
-        'HOST': 'ec2-34-203-182-65.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
-}
-import dj_database_url
-database_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(database_from_env)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'd6mckk9l2qrm5',
+#         'USER': 'jpuwikklsmfdhr',
+#         'PASSWORD': 'd7e0856aad07897c60369f074fe3e0832df93201cbe8f2fd8bd5309121ae78b7',
+#         'HOST': 'ec2-34-203-182-65.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
+# database_from_env = dj_database_url.config(conn_max_age=600)
+# DATABASES['default'].update(database_from_env)
+
+DATABASES = {
+    'default': dj_database_url.config(               default='',        conn_max_age=600    )}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -134,7 +138,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# Following settings only make sense on production and may break development environments.
+if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
+    # in your application directory on Render.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Turn on WhiteNoise storage backend that takes care of compressing static files
+    # and creating unique names for each version so they can safely be cached forever.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -145,5 +156,3 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
-STATICFILES_DIRS = [BASE_DIR/'static']
-STATIC_ROOT = BASE_DIR / "staticfiles"
